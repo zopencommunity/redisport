@@ -1,6 +1,6 @@
 # Update bump details accordingly. Use bump check to confirm.
 # bump: redis-version /REDIS_VERSION="(.*)"/ https://github.com/redis/redis.git|semver:*
-# REDIS_VERSION="V.R.M" # Specify a stable release
+# REDIS_VERSION="20100825" # Specify a stable release
 # export ZOPEN_STABLE_TAG="v${REDIS_VERSION}"
 export ZOPEN_STABLE_URL="https://github.com/redis/redis.git"
 export ZOPEN_STABLE_DEPS="make openssl which pkgconfig check_python"

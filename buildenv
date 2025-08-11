@@ -1,6 +1,6 @@
 # Update bump details accordingly. Use bump check to confirm.
 # bump: redis-version /REDIS_VERSION="(.*)"/ gitrefs:https://github.com/redis/redis.git|re:/([\d]+.[\d]+.[\d]+)/$1/|sort
-REDIS_VERSION="8.0.3" # Specify a stable release
+REDIS_VERSION="8.2.0" # Specify a stable release
 export ZOPEN_STABLE_TAG="${REDIS_VERSION}"
 export ZOPEN_STABLE_URL="https://github.com/redis/redis.git"
 export ZOPEN_STABLE_DEPS="tcl tcltls make openssl which pkgconfig check_python coreutils bash findutils grep"
@@ -13,6 +13,7 @@ export ZOPEN_INSTALL_OPTS="install PREFIX=\${ZOPEN_INSTALL_DIR}"
 export ZOPEN_COMP="CLANG"
 export ZOPEN_MAKE="zopen_make"
 export ZOPEN_SYSTEM_PREREQ="zos25"
+export USE_ZOSLIB_LOCALE=1
 
 zopen_make() {
 	cd deps; make "$@" BUILD_TLS=yes fast_float  fpconv  hdr_histogram	hiredis  linenoise lua; cd -

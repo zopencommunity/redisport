@@ -13,6 +13,7 @@ export ZOPEN_INSTALL_OPTS="install PREFIX=\${ZOPEN_INSTALL_DIR}"
 export ZOPEN_COMP="CLANG"
 export ZOPEN_MAKE="zopen_make"
 export ZOPEN_SYSTEM_PREREQ="zos25"
+export USE_ZOSLIB_LOCALE=1
 
 zopen_make() {
 	cd deps; make "$@" BUILD_TLS=yes fast_float  fpconv  hdr_histogram	hiredis  linenoise lua; cd -

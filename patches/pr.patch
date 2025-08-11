@@ -17,10 +17,10 @@ index 13a115b..ffdeb20 100644
  .DEFAULT:
  	for dir in $(SUBDIRS); do $(MAKE) -C $$dir $@; done
 diff --git a/deps/Makefile b/deps/Makefile
-index 5593e0c..719f687 100644
+index 9ce31e7..53b146b 100644
 --- a/deps/Makefile
 +++ b/deps/Makefile
-@@ -106,7 +106,7 @@ ARFLAGS=rc
+@@ -125,7 +125,7 @@ ARFLAGS=rc
  
  lua: .make-prerequisites
  	@printf '%b %b\n' $(MAKECOLOR)MAKE$(ENDCOLOR) $(BINCOLOR)$@$(ENDCOLOR)
@@ -29,6 +29,19 @@ index 5593e0c..719f687 100644
  
  .PHONY: lua
  
+diff --git a/deps/fast_float/Makefile b/deps/fast_float/Makefile
+index e3acaa5..5c32780 100644
+--- a/deps/fast_float/Makefile
++++ b/deps/fast_float/Makefile
+@@ -18,7 +18,7 @@ libfast_float: fast_float_strtod.o
+ 32bit: libfast_float
+ 
+ fast_float_strtod.o: fast_float_strtod.cpp
+-	$(CXX) $(FASTFLOAT_CFLAGS) -c fast_float_strtod.cpp $(FASTFLOAT_LDFLAGS)
++	$(CXX) $(FASTFLOAT_CFLAGS) $(STD) -c fast_float_strtod.cpp $(FASTFLOAT_LDFLAGS)
+ 
+ clean:
+ 	rm -f *.o
 diff --git a/deps/fast_float/fast_float.h b/deps/fast_float/fast_float.h
 index 81d9da5..6c57e7f 100644
 --- a/deps/fast_float/fast_float.h
@@ -85,7 +98,7 @@ index f3bba2f..e7cece6 100644
  linux:
  	$(MAKE) all MYCFLAGS=-DLUA_USE_LINUX MYLIBS="-Wl,-E -ldl -lreadline -lhistory -lncurses"
 diff --git a/src/Makefile b/src/Makefile
-index e3a76ed..d6c37e5 100644
+index 500f0c0..d51f6ef 100644
 --- a/src/Makefile
 +++ b/src/Makefile
 @@ -24,14 +24,6 @@ CLANG := $(findstring clang,$(shell sh -c '$(CC) --version | head -1'))
@@ -103,7 +116,7 @@ index e3a76ed..d6c37e5 100644
  ifneq ($(OPTIMIZATION),-O0)
  	OPTIMIZATION+=-fno-omit-frame-pointer
  endif
-@@ -202,6 +194,10 @@ ifeq ($(uname_S),DragonFly)
+@@ -214,6 +206,10 @@ ifeq ($(uname_S),DragonFly)
  	# DragonFly
  	FINAL_LIBS+= -lpthread -lexecinfo
  else
@@ -114,7 +127,7 @@ index e3a76ed..d6c37e5 100644
  ifeq ($(uname_S),OpenBSD)
  	# OpenBSD
  	FINAL_LIBS+= -lpthread -lexecinfo
-@@ -217,8 +213,8 @@ ifeq ($(uname_S),Haiku)
+@@ -229,8 +225,8 @@ ifeq ($(uname_S),Haiku)
  	FINAL_LIBS+= -lpthread
  else
  	# All the other OSes (notably Linux)
@@ -125,13 +138,13 @@ index e3a76ed..d6c37e5 100644
  endif
  endif
  endif
-@@ -536,3 +532,4 @@ install: all
+@@ -548,3 +544,4 @@ install: all
  
  uninstall:
  	rm -f $(INSTALL_BIN)/{$(REDIS_SERVER_NAME),$(REDIS_BENCHMARK_NAME),$(REDIS_CLI_NAME),$(REDIS_CHECK_RDB_NAME),$(REDIS_CHECK_AOF_NAME),$(REDIS_SENTINEL_NAME)}
 +endif
 diff --git a/src/bio.c b/src/bio.c
-index 34e3ac1..73e870c 100644
+index 2958500..e3f2d17 100644
 --- a/src/bio.c
 +++ b/src/bio.c
 @@ -398,8 +398,8 @@ void bioKillThreads(void) {
@@ -146,10 +159,10 @@ index 34e3ac1..73e870c 100644
                  serverLog(LL_WARNING,
                      "Bio worker thread #%lu can not be joined: %s",
 diff --git a/src/config.h b/src/config.h
-index 4733855..c476a0c 100644
+index 513c802..c3bb1ba 100644
 --- a/src/config.h
 +++ b/src/config.h
-@@ -224,7 +224,7 @@ void setproctitle(const char *fmt, ...);
+@@ -230,7 +230,7 @@ void setproctitle(const char *fmt, ...);
      defined(apollo) || defined(__convex__) || defined(_CRAY) || \
      defined(__hppa) || defined(__hp9000) || \
      defined(__hp9000s300) || defined(__hp9000s700) || \
@@ -159,10 +172,10 @@ index 4733855..c476a0c 100644
  #endif
  #endif /* linux */
 diff --git a/src/debug.c b/src/debug.c
-index 77a4cf7..03618fa 100644
+index 4ff7da7..fe5df44 100644
 --- a/src/debug.c
 +++ b/src/debug.c
-@@ -2275,7 +2275,7 @@ int memtest_test_linux_anonymous_maps(void) {
+@@ -2283,7 +2283,7 @@ int memtest_test_linux_anonymous_maps(void) {
  
  static void killMainThread(void) {
      int err;
@@ -171,7 +184,7 @@ index 77a4cf7..03618fa 100644
          if ((err = pthread_join(server.main_thread_id,NULL)) != 0) {
              serverLog(LL_WARNING, "main thread can not be joined: %s", strerror(err));
          } else {
-@@ -2311,6 +2311,8 @@ void doFastMemoryTest(void) {
+@@ -2319,6 +2319,8 @@ void doFastMemoryTest(void) {
  #endif /* HAVE_PROC_MAPS */
  }
  
@@ -180,7 +193,7 @@ index 77a4cf7..03618fa 100644
  /* Scans the (assumed) x86 code starting at addr, for a max of `len`
   * bytes, searching for E8 (callq) opcodes, and dumping the symbols
   * and the call offset if they appear to be valid. */
-@@ -2368,6 +2370,7 @@ void dumpCodeAroundEIP(void *eip) {
+@@ -2376,6 +2378,7 @@ void dumpCodeAroundEIP(void *eip) {
          }
      }
  }
@@ -188,7 +201,7 @@ index 77a4cf7..03618fa 100644
  
  void invalidFunctionWasCalled(void) {}
  
-@@ -2394,7 +2397,11 @@ static void sigsegvHandler(int sig, siginfo_t *info, void *secret) {
+@@ -2402,7 +2405,11 @@ static void sigsegvHandler(int sig, siginfo_t *info, void *secret) {
          serverLog(LL_WARNING,
          "Accessing address: %p", (void*)info->si_addr);
      }
@@ -200,7 +213,7 @@ index 77a4cf7..03618fa 100644
          serverLog(LL_WARNING, "Killed by PID: %ld, UID: %d", (long) info->si_pid, info->si_uid);
      }
  
-@@ -2432,7 +2439,7 @@ static void sigsegvHandler(int sig, siginfo_t *info, void *secret) {
+@@ -2440,7 +2447,7 @@ static void sigsegvHandler(int sig, siginfo_t *info, void *secret) {
  
      if (print_full_crash_info) printCrashReport();
  
@@ -210,10 +223,10 @@ index 77a4cf7..03618fa 100644
          dumpCodeAroundEIP(eip);
  #endif
 diff --git a/src/iothread.c b/src/iothread.c
-index d643905..878559e 100644
+index 27d5339..ad30a3d 100644
 --- a/src/iothread.c
 +++ b/src/iothread.c
-@@ -617,15 +617,15 @@ void killIOThreads(void) {
+@@ -795,15 +795,15 @@ void killIOThreads(void) {
  
      int err, j;
      for (j = 1; j < server.io_threads_num; j++) {
@@ -234,10 +247,10 @@ index d643905..878559e 100644
          }
      }
 diff --git a/src/server.c b/src/server.c
-index 42c7f3d..ede55a9 100644
+index a144001..91ec3ec 100644
 --- a/src/server.c
 +++ b/src/server.c
-@@ -1222,6 +1222,14 @@ static inline void updateCachedTimeWithUs(int update_daylight_info, const long l
+@@ -1263,6 +1263,14 @@ static inline void updateCachedTimeWithUs(int update_daylight_info, const long l
          struct tm tm;
          time_t ut = server.unixtime;
          localtime_r(&ut,&tm);
@@ -252,7 +265,7 @@ index 42c7f3d..ede55a9 100644
          atomicSet(server.daylight_active, tm.tm_isdst);
      }
  }
-@@ -2686,8 +2694,8 @@ void resetServerStats(void) {
+@@ -2759,8 +2767,8 @@ void resetServerStats(void) {
   * can work reliably (default cancelability type is PTHREAD_CANCEL_DEFERRED).
   * Needed for pthread_cancel used by the fast memory test used by the crash report. */
  void makeThreadKillable(void) {

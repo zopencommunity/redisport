@@ -1,6 +1,6 @@
 # Update bump details accordingly. Use bump check to confirm.
 # bump: redis-version /REDIS_VERSION="(.*)"/ gitrefs:https://github.com/redis/redis.git|re:/([\d]+.[\d]+.[\d]+)/$1/|sort
-REDIS_VERSION="8.2.3" # Specify a stable release
+REDIS_VERSION="8.4.0" # Specify a stable release
 export ZOPEN_STABLE_TAG="${REDIS_VERSION}"
 export ZOPEN_STABLE_URL="https://github.com/redis/redis.git"
 export ZOPEN_STABLE_DEPS="tcl tcltls make openssl which pkgconfig check_python coreutils bash findutils grep"
